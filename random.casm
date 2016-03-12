@@ -1,0 +1,86 @@
+; This is used to test the multithreading provided by the game environment
+.global start:
+
+start:
+    ;MEMW [4] :thread #0x20000200
+    ;MEMW [4] :thread2 #0x20000200
+    ;MEMW [4] :thread3 #0x20000200
+thread0:
+    ;MOV #0x40000100 $S
+    ;MOV #0x20000100 $A
+    ;MEMR [4] $A $C
+    ;MOV #0xF $B
+    ;DIV $C $B
+    ;SHL #0x08 $B
+    ;SHL #0x08 $B
+    ;ADD #0x40000000 $B
+    ;MOV $B $S
+loop:
+    MEMW [4] :thread2 #0x20000200
+    MOV #0x20000100 $A
+    MEMR [4] $A $A
+    MOV #0xF $B
+    DIV $A $B
+    SHL #0x08 $B
+    SHL #0x08 $B
+    ADD #0x40000000 $B
+    ADD $C $B
+    MEMW [4] #0x00 $B
+    ADD #0xF $B
+    
+    JMP <> :loop
+
+thread2:
+    MOV #0x40050000 $S
+    ;MOV #0x20000100 $A
+    ;MEMR [4] $A $C
+    ;MOV #0xA $B
+    ;DIV $C $B
+    ;SHL #0x08 i$B
+    ;SHL #0x08 $B
+    ;ADD #0x40000000 $B
+    ;MOV $B $S
+part2:
+    MEMW [4] :thread3 #0x20000200
+    MOV #0x20000100 $A
+    MEMR [4] $A $A
+    MOV #0xF $B
+    DIV $A $B
+    SHL #0x08 $B
+    SHL #0x08 $B
+    ADD #0x40000000 $B
+    ADD $C $B
+    MEMW [4] #0x00 $B
+
+    ADD #0xF $C 
+    ;ADD #0xF $B 
+    JMP <> :part2
+
+
+thread3:
+    MOV #0x40080000 $S
+    ;MOV #0x20000100 $A
+    ;MEMR [4] $A $C
+    ;MOV #0xA $B
+    ;DIV $C $B
+    ;SHL #0x08 $B
+    ;SHL #0x08 $B
+    ;ADD #0x40000000 $B
+    ;MOV $B $S
+
+part3:
+    MEMW [4] :thread0 #0x20000200
+    MOV #0x20000100 $A
+    MEMR [4] $A $A
+    MOV #0xF $B
+    DIV $A $B
+    SHL #0x08 $B
+    SHL #0x08 $B
+    ADD #0x40000000 $B
+    ADD $C $B
+    MEMW [4] #0x00 $B
+
+    ADD #0xF $C 
+    ;ADD #0xF $B 
+
+    JMP <> :part3
